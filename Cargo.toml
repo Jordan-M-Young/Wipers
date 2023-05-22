@@ -1,5 +1,5 @@
 [package]
-name = "Wipers"
+name = "wipers"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
  async-openai = "0.10.3"
+tokio = { version = "1", features = ["full"] }
