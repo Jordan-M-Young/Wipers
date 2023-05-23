@@ -8,24 +8,34 @@ enum BlockType {
     OtherBlock,
 }
 
-struct BlockConstants {
-    class_string: String,
-    function_string: String,
-    method_string: String,
+pub struct BlockConstants {
+    pub class_string: String,
+    pub function_string: String,
+    pub method_string: String,
+    pub import_strings: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ParsedFile {
+    pub blocks: Vec<String>,
+    pub imports: String,
+    pub file_type: FileTypes,
 }
 
 impl BlockConstants {
-    fn new(file_type: &FileTypes) -> Self {
+    pub fn new(file_type: &FileTypes) -> Self {
         let constants = match file_type {
             FileTypes::Python => BlockConstants {
                 class_string: "class ".to_string(),
                 function_string: "def ".to_string(),
                 method_string: "    def".to_string(),
+                import_strings: vec!["import".to_string()],
             },
             FileTypes::Javascript => BlockConstants {
                 class_string: "class".to_string(),
                 function_string: "function ".to_string(),
                 method_string: "    ".to_string(),
+                import_strings: vec!["import".to_string(), "require".to_string()],
             },
             _ => todo!(),
         };
@@ -33,13 +43,11 @@ impl BlockConstants {
     }
 }
 
-pub fn parse(file: &LoadedFile) -> Vec<String> {
-    let block_constants = BlockConstants::new(&file.file_type);
-
+pub fn parse(file: &LoadedFile) -> ParsedFile {
     match file.file_type {
-        FileTypes::Python => parse_file(&file.file_string, block_constants),
-        FileTypes::Javascript => parse_file(&file.file_string, block_constants),
-        FileTypes::Rust => parse_rust(&file.file_string),
+        FileTypes::Python => parse_file(&file),
+        FileTypes::Javascript => parse_file(&file),
+        FileTypes::Rust => parse_file(&file),
         FileTypes::Default => {
             todo!("How'd you get here")
         }
@@ -53,11 +61,16 @@ pub fn load_file_string(filepath: &str) -> Result<String, FromUtf8Error> {
     Ok(file_string)
 }
 
-fn parse_file(file_string: &str, block_constants: BlockConstants) -> Vec<String> {
+fn parse_file(file: &LoadedFile) -> ParsedFile {
+    let block_constants: BlockConstants = BlockConstants::new(&file.file_type);
+    let file_string = &file.file_string;
+    let file_type = file.file_type.clone();
+
     let file_lines: Vec<&str> = file_string.split('\n').collect();
     let mut blocks: Vec<String> = vec![];
     let mut block_string = "".to_string();
     let mut block_type = BlockType::OtherBlock;
+    let mut import_string = "".to_string();
     for line in file_lines {
         if line.contains(&block_constants.method_string) {
             block_string += line;
@@ -86,11 +99,23 @@ fn parse_file(file_string: &str, block_constants: BlockConstants) -> Vec<String>
             continue;
         }
 
+        for statement in &block_constants.import_strings {
+            if line.contains(statement) {
+                import_string += line;
+                import_string += "\n";
+                break;
+            }
+        }
+
         block_string += line;
     }
     blocks.push(block_string);
 
-    blocks
+    ParsedFile {
+        blocks,
+        imports: import_string,
+        file_type,
+    }
 }
 
 // fn parse_javascript(file_string: &str) -> Vec<String> {
@@ -138,8 +163,3 @@ fn parse_file(file_string: &str, block_constants: BlockConstants) -> Vec<String>
 //     blocks.push(block_string);
 
 //     blocks
-// }
-
-fn parse_rust(file_string: &str) -> Vec<String> {
-    vec!["".to_string()]
-}

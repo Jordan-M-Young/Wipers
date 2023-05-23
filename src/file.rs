@@ -1,6 +1,8 @@
 use std::fs;
 use std::string::FromUtf8Error;
 
+use crate::parse::ParsedFile;
+
 #[derive(Debug)]
 pub struct LoadedFile {
     pub file_path: String,
@@ -8,7 +10,7 @@ pub struct LoadedFile {
     pub file_type: FileTypes,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum FileTypes {
     Python,
     Javascript,
@@ -47,4 +49,8 @@ fn get_file_type(file_path: &str) -> FileTypes {
     } else {
         todo!("Haven't implmented a parser for your file type yet. ")
     }
+}
+
+pub fn write_tests_to_file(tests: Vec<String>, parsed_file: ParsedFile) {
+    let mut test_file_string = parsed_file.imports;
 }
