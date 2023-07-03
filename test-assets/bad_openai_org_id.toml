@@ -1,0 +1,5 @@
+[openai]
+key = ""
+
+[lock]
+lockfiles = []
