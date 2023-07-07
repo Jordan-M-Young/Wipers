@@ -4,6 +4,8 @@ pub mod config;
 pub mod file;
 pub mod parse;
 pub mod postprocess;
+pub mod write;
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let toml_filename = "./wipers.toml";
