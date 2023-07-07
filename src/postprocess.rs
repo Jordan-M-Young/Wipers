@@ -8,11 +8,13 @@ struct ProcessedTest {
 }
 
 fn set_to_string(import_set: HashSet<String>) -> String {
-    let mut import_statements = "".to_string();
+    let mut import_array: Vec<String> = vec![];
     for statement in import_set {
-        import_statements += &statement
+        import_array.push(statement);
     }
-    import_statements
+    import_array.sort();
+    import_array.join("\n")
+    
 }
 
 pub fn post_process(test: String, parsed_file: &ParsedFile) -> String {
@@ -59,15 +61,16 @@ mod tests {
     fn test_set_to_string() {
         let mut import_set: HashSet<String> = HashSet::new();
 
-        let import_statement_a = "import os\n".to_string();
-        let import_statement_b = "import sys\n".to_string();
+        let import_statement_a = "import os".to_string();
+        let import_statement_b = "import sys".to_string();
 
         import_set.insert(import_statement_a);
         import_set.insert(import_statement_b);
 
         let actual_import_string = set_to_string(import_set);
-        let expected_import_string = "import sys\nimport os\n".to_string();
+        let expected_import_string = "import os\nimport sys".to_string();
 
-        assert_eq!(actual_import_string, expected_import_string)
+        assert_eq!(actual_import_string, expected_import_string);
+
     }
 }

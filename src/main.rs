@@ -12,7 +12,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let config = config::load_toml(toml_filename);
     let out_path = "./test-outputs";
 
-
     println!("{:?}", config);
 
     let client = Client::new()
@@ -53,9 +52,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let write_result = write::tests_to_file(&test_file, &test_file_name, out_path);
 
     match write_result {
-        Ok(_) => println!("File: {} Written Succesfully.",test_file),
+        Ok(_) => println!("File: {} Written Succesfully.", test_file),
         Err(err) => {
-            println!("{}",err)
+            println!("{}", err)
         }
     }
 
