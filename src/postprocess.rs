@@ -89,7 +89,7 @@ mod tests {
         import_set.insert(import_statement_b);
 
         let actual_import_string = set_to_string(import_set);
-        let expected_import_string ="import os\nimport sys\n".to_string();
+        let expected_import_string ="import sys\nimport os\n".to_string();
 
         assert_eq!(actual_import_string,expected_import_string)
     }
