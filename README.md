@@ -10,22 +10,22 @@ working on it.....
 
 Configuration of Wipers can be achieved using the wipers.toml file. To start, set your openai api key and org_id (if applicable) like so:
 
-`
+```
 [openai]
 key = "<MY_OPEN_AI_KEY>"
 org_id = "<MY_ORG_ID>"
 
-`
+```
 
 
 ## Lock Tests
 
 There are several reasons why you might not want to re-write tests for a given file. To stop Wipers from overwriting a given test file please add the file path string to the lockfiles array in your wipers.toml file like so:
 
-`
+```
 [lock]
 lockfiles = ["./tests/test_my_file.py",""./tests/test_functions.py]
-`
+```
 
 ## FAQ
 
