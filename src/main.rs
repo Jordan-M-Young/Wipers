@@ -1,21 +1,19 @@
 use async_openai::{types::CreateCompletionRequestArgs, Client};
 use std::error::Error;
+pub mod config;
 pub mod file;
 pub mod parse;
 pub mod postprocess;
-pub mod config;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-
     let toml_filename = "./wipers.toml";
     let config = config::load_toml(toml_filename);
 
-    println!("{:?}",config);
+    println!("{:?}", config);
 
     let client = Client::new()
         .with_api_key(config.openai.key)
         .with_org_id(config.openai.org_id);
-
 
     let file_path = "./test-inputs/functions.py";
 
