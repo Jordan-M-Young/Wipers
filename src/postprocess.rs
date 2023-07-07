@@ -39,7 +39,6 @@ fn set_to_string(import_set: HashSet<String>) -> String {
 pub fn post_process(test: String, parsed_file: &ParsedFile) -> String {
     let base_test_lines = test.split("\n");
 
-
     let mut import_set: HashSet<String> = HashSet::new();
 
     let block_constants = BlockConstants::new(&parsed_file.file_type);
@@ -57,15 +56,11 @@ pub fn post_process(test: String, parsed_file: &ParsedFile) -> String {
         }
     }
 
-
-
-
-    println!("{:?}",&import_set);
+    println!("{:?}", &import_set);
     let import_statements = set_to_string(import_set);
-    println!("{}",&import_statements);
-    
-    let import_statements = vec![parsed_file.imports.clone(),import_statements].join("\n");
+    println!("{}", &import_statements);
 
+    let import_statements = vec![parsed_file.imports.clone(), import_statements].join("\n");
 
     let final_test_string = vec![import_statements, processed_test_string].join("\n");
     final_test_string

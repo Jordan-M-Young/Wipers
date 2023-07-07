@@ -1,6 +1,4 @@
 use crate::file::{FileTypes, LoadedFile};
-use std::fs;
-use std::string::FromUtf8Error;
 
 enum BlockType {
     FunctionBlock,
@@ -15,7 +13,7 @@ pub struct BlockConstants {
     pub import_strings: Vec<String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ParsedFile {
     pub blocks: Vec<String>,
     pub imports: String,
@@ -54,13 +52,6 @@ pub fn parse(file: &LoadedFile) -> ParsedFile {
     }
 }
 
-pub fn load_file_string(filepath: &str) -> Result<String, FromUtf8Error> {
-    let file_bytes = fs::read(filepath).expect("couldn't load file");
-
-    let file_string = String::from_utf8(file_bytes)?;
-    Ok(file_string)
-}
-
 fn parse_file(file: &LoadedFile) -> ParsedFile {
     let block_constants: BlockConstants = BlockConstants::new(&file.file_type);
     let file_string = &file.file_string;
@@ -74,6 +65,7 @@ fn parse_file(file: &LoadedFile) -> ParsedFile {
     for line in file_lines {
         if line.contains(&block_constants.method_string) {
             block_string += line;
+            block_string += "\n";
             continue;
         }
 
@@ -85,6 +77,7 @@ fn parse_file(file: &LoadedFile) -> ParsedFile {
 
             block_type = BlockType::FunctionBlock;
             block_string = line.to_owned();
+            block_string += "\n";
             continue;
         }
 
@@ -96,6 +89,7 @@ fn parse_file(file: &LoadedFile) -> ParsedFile {
 
             block_type = BlockType::ClassBlock;
             block_string = line.to_owned();
+            block_string += "\n";
             continue;
         }
 
@@ -108,6 +102,7 @@ fn parse_file(file: &LoadedFile) -> ParsedFile {
         }
 
         block_string += line;
+        block_string += "\n"
     }
     blocks.push(block_string);
 
@@ -118,48 +113,67 @@ fn parse_file(file: &LoadedFile) -> ParsedFile {
     }
 }
 
-// fn parse_javascript(file_string: &str) -> Vec<String> {
-//     let file_lines: Vec<&str> = file_string.split('\n').collect();
-//     let mut blocks: Vec<String> = vec![];
-//     let mut block_string = "".to_string();
-//     let mut block_type = BlockType::OtherBlock;
-//     for line in file_lines {
+#[cfg(test)]
+mod tests {
+    use super::{parse, ParsedFile};
+    use crate::file::{FileTypes, LoadedFile};
 
-//         if line.contains("  ") {
-//             block_string += line;
-//             continue
-//         }
+    #[test]
+    fn test_parse() {
+        // dummy file a minimal python file #1
+        let file = LoadedFile::new("./test-assets/test_load_file.py");
 
-//         if line.contains("function ") {
+        let actual_parsed_file = parse(&file);
 
-//             match block_type {
-//                 BlockType::ClassBlock | BlockType::FunctionBlock => {
-//                     blocks.push(block_string)
-//                 }
-//                 _ => {}
-//             }
+        let expected_block = r#"def do_something():
+    print("hello World")
+"#
+        .to_string();
+        let expected_blocks: Vec<String> = vec![expected_block];
+        let expected_imports = "import os\n";
+        let expected_parsed_file = ParsedFile {
+            blocks: expected_blocks,
+            imports: expected_imports.to_string(),
+            file_type: FileTypes::Python,
+        };
 
-//             block_type = BlockType::FunctionBlock;
-//             block_string = line.to_owned();
-//             continue
-//         }
+        assert_eq!(expected_parsed_file, actual_parsed_file);
 
-//         if line.contains("class ") {
-//             match block_type {
-//                 BlockType::ClassBlock | BlockType::FunctionBlock => {
-//                     blocks.push(block_string)
-//                 }
-//                 _ => {}
-//             }
+        // dummy file #2 a larger python file
 
-//             block_type = BlockType::ClassBlock;
-//             block_string = line.to_owned();
-//             continue
-//         }
+        let file = LoadedFile::new("./test-assets/functions.py");
 
-//         block_string += line;
+        let actual_parsed_file = parse(&file);
 
-//     }
-//     blocks.push(block_string);
+        let expected_block_a = r#"def add(x,y):
+    return x + y
 
-//     blocks
+"#
+        .to_string();
+        let expected_block_b = r#"class myClass():
+    def __init__(self):
+        self.some_val = 0
+        self.other_val = True
+
+    def get_some_val(self):
+        return self.some_val
+
+"#
+        .to_string();
+        let expected_block_c = r#"def subtract(x,y):
+    return x-y
+"#
+        .to_string();
+
+        let expected_blocks: Vec<String> =
+            vec![expected_block_a, expected_block_b, expected_block_c];
+        let expected_imports = "import os\nimport sys\n";
+        let expected_parsed_file = ParsedFile {
+            blocks: expected_blocks,
+            imports: expected_imports.to_string(),
+            file_type: FileTypes::Python,
+        };
+
+        assert_eq!(expected_parsed_file, actual_parsed_file)
+    }
+}
