@@ -6,6 +6,7 @@ enum BlockType {
     OtherBlock,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct BlockConstants {
     pub class_string: String,
     pub function_string: String,
@@ -115,7 +116,7 @@ fn parse_file(file: &LoadedFile) -> ParsedFile {
 
 #[cfg(test)]
 mod tests {
-    use super::{parse, ParsedFile};
+    use super::{parse, BlockConstants, ParsedFile};
     use crate::file::{FileTypes, LoadedFile};
 
     #[test]
@@ -175,5 +176,42 @@ mod tests {
         };
 
         assert_eq!(expected_parsed_file, actual_parsed_file)
+
+        // javascript dummy file....
+    }
+
+    #[test]
+    fn test_block_constants_new() {
+        // python file type
+        let file_type = FileTypes::Python;
+        let actual_block_constants = BlockConstants::new(&file_type);
+        let expected_block_constants = BlockConstants {
+            class_string: "class ".to_string(),
+            function_string: "def ".to_string(),
+            method_string: "    def".to_string(),
+            import_strings: vec!["import".to_string()],
+        };
+
+        assert_eq!(actual_block_constants, expected_block_constants);
+
+        // javascript file type
+
+        let file_type = FileTypes::Javascript;
+        let actual_block_constants = BlockConstants::new(&file_type);
+        let expected_block_constants = BlockConstants {
+            class_string: "class".to_string(),
+            function_string: "function ".to_string(),
+            method_string: "    ".to_string(),
+            import_strings: vec!["import".to_string(), "require".to_string()],
+        };
+
+        assert_eq!(actual_block_constants, expected_block_constants);
+    }
+
+    #[test]
+    #[should_panic(expected = "not yet implemented")]
+    fn block_constants_new_fail() {
+        let file_type = FileTypes::Rust;
+        let actual_block_constants = BlockConstants::new(&file_type);
     }
 }
