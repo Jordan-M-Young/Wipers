@@ -2,7 +2,7 @@ use crate::file::LoadedFile;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Error, Write};
 
-fn gen_test_name(file: LoadedFile) -> String {
+pub fn gen_test_name(file: LoadedFile) -> String {
     let file_path = file.file_path;
 
     let split_path: Vec<&str> = file_path.split("/").collect();
@@ -15,7 +15,7 @@ fn gen_test_name(file: LoadedFile) -> String {
     test_file_name
 }
 
-fn tests_to_file(test_string: &str, test_file_name: &str, out_path: &str) -> Result<(), Error> {
+pub fn tests_to_file(test_string: &str, test_file_name: &str, out_path: &str) -> Result<(), Error> {
     let outfile_path = format!("{}/{}", out_path, test_file_name);
 
     let mut out_file = File::create(outfile_path)?;
