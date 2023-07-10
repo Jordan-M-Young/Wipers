@@ -7,33 +7,14 @@ struct ProcessedTest {
     imports: HashSet<String>,
 }
 
-// fn import_set_union(imports: Vec<HashSet<String>>) -> HashSet<String> {
-
-//     if imports.len() == 0 {
-//         return HashSet::new()
-//     }
-
-//     if imports.len() == 1 {
-//         return imports[0]
-
-//     }
-
-//     let mut main_set = HashSet::new();
-
-//     for set in imports {
-//         main_set = main_set.union(&set)
-//     }
-
-//     main_set
-
-// }
-
 fn set_to_string(import_set: HashSet<String>) -> String {
-    let mut import_statements = "".to_string();
+    let mut import_array: Vec<String> = vec![];
     for statement in import_set {
-        import_statements += &statement
+        import_array.push(statement);
     }
-    import_statements
+    import_array.sort();
+    import_array.join("\n")
+    
 }
 
 pub fn post_process(test: String, parsed_file: &ParsedFile) -> String {
@@ -66,36 +47,30 @@ pub fn post_process(test: String, parsed_file: &ParsedFile) -> String {
     final_test_string
 }
 
-
 #[cfg(test)]
 mod tests {
     use std::collections::HashSet;
 
-    use crate::file::LoadedFile;
-    use crate::parse::ParsedFile;
-    use crate::parse::parse;
     use super::post_process;
     use super::set_to_string;
-
+    use crate::file::LoadedFile;
+    use crate::parse::parse;
+    use crate::parse::ParsedFile;
 
     #[test]
     fn test_set_to_string() {
         let mut import_set: HashSet<String> = HashSet::new();
 
-        let import_statement_a = "import os\n".to_string();
-        let import_statement_b = "import sys\n".to_string();
+        let import_statement_a = "import os".to_string();
+        let import_statement_b = "import sys".to_string();
 
         import_set.insert(import_statement_a);
         import_set.insert(import_statement_b);
 
         let actual_import_string = set_to_string(import_set);
-        let expected_import_string ="import sys\nimport os\n".to_string();
+        let expected_import_string = "import os\nimport sys".to_string();
 
-        assert_eq!(actual_import_string,expected_import_string)
+        assert_eq!(actual_import_string, expected_import_string);
+
     }
-
-
-
-
 }
-

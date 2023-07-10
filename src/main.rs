@@ -4,10 +4,13 @@ pub mod config;
 pub mod file;
 pub mod parse;
 pub mod postprocess;
+pub mod write;
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let toml_filename = "./wipers.toml";
     let config = config::load_toml(toml_filename);
+    let out_path = "./test-outputs";
 
     println!("{:?}", config);
 
@@ -45,8 +48,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let test_string = tests.join("\n");
     let test_file = postprocess::post_process(test_string, &parsed_file);
+    let test_file_name = write::gen_test_name(lf);
+    let write_result = write::tests_to_file(&test_file, &test_file_name, out_path);
 
-    // println!("{}", test_file);
+    match write_result {
+        Ok(_) => println!("File: {} Written Succesfully.", test_file),
+        Err(err) => {
+            println!("{}", err)
+        }
+    }
 
     Ok(())
 }
