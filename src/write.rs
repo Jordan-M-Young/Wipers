@@ -7,7 +7,7 @@ pub fn gen_test_name(file: LoadedFile) -> String {
 
     let split_path: Vec<&str> = file_path.split("/").collect();
 
-    let file_name = split_path[split_path.len()-1];
+    let file_name = split_path[split_path.len() - 1];
 
     let mut test_file_name = "test_".to_string();
     test_file_name.push_str(file_name);
