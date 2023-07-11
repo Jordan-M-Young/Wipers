@@ -14,7 +14,22 @@ Configuration of Wipers can be achieved using the wipers.toml file. To start, se
 [openai]
 key = "<MY_OPEN_AI_KEY>"
 org_id = "<MY_ORG_ID>"
+```
 
+## Run Wipers
+
+To run Wipers
+
+### Binary
+
+```shell
+wipers -f "<MY_FILE>"
+```
+
+### Debug
+
+```shell
+cargo run -- -f "<MY_FILE>"
 ```
 
 
