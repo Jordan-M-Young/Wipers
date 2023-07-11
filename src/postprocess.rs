@@ -7,38 +7,18 @@ struct ProcessedTest {
     imports: HashSet<String>,
 }
 
-// fn import_set_union(imports: Vec<HashSet<String>>) -> HashSet<String> {
-
-//     if imports.len() == 0 {
-//         return HashSet::new()
-//     }
-
-//     if imports.len() == 1 {
-//         return imports[0]
-
-//     }
-
-//     let mut main_set = HashSet::new();
-
-//     for set in imports {
-//         main_set = main_set.union(&set)
-//     }
-
-//     main_set
-
-// }
-
 fn set_to_string(import_set: HashSet<String>) -> String {
-    let mut import_statements = "".to_string();
+    let mut import_array: Vec<String> = vec![];
     for statement in import_set {
-        import_statements += &statement
+        import_array.push(statement);
     }
-    import_statements
+    import_array.sort();
+    import_array.join("\n")
+    
 }
 
 pub fn post_process(test: String, parsed_file: &ParsedFile) -> String {
     let base_test_lines = test.split("\n");
-
 
     let mut import_set: HashSet<String> = HashSet::new();
 
@@ -57,16 +37,40 @@ pub fn post_process(test: String, parsed_file: &ParsedFile) -> String {
         }
     }
 
-
-
-
-    println!("{:?}",&import_set);
+    println!("{:?}", &import_set);
     let import_statements = set_to_string(import_set);
-    println!("{}",&import_statements);
-    
-    let import_statements = vec![parsed_file.imports.clone(),import_statements].join("\n");
+    println!("{}", &import_statements);
 
+    let import_statements = vec![parsed_file.imports.clone(), import_statements].join("\n");
 
     let final_test_string = vec![import_statements, processed_test_string].join("\n");
     final_test_string
+}
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashSet;
+
+    use super::post_process;
+    use super::set_to_string;
+    use crate::file::LoadedFile;
+    use crate::parse::parse;
+    use crate::parse::ParsedFile;
+
+    #[test]
+    fn test_set_to_string() {
+        let mut import_set: HashSet<String> = HashSet::new();
+
+        let import_statement_a = "import os".to_string();
+        let import_statement_b = "import sys".to_string();
+
+        import_set.insert(import_statement_a);
+        import_set.insert(import_statement_b);
+
+        let actual_import_string = set_to_string(import_set);
+        let expected_import_string = "import os\nimport sys".to_string();
+
+        assert_eq!(actual_import_string, expected_import_string);
+
+    }
 }
