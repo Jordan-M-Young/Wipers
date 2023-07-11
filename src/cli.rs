@@ -53,48 +53,32 @@ mod tests {
 
     #[test]
     fn test_argument_parse_fail_no_file() {
-        let input_args = vec![
-            "wipers".to_string(),
-            "-f".to_string(),
-        ];
+        let input_args = vec!["wipers".to_string(), "-f".to_string()];
 
         let actual_config_result = argument_parse(input_args);
 
         assert!(actual_config_result.is_none())
-
-
     }
 
     #[test]
     fn test_argument_parse_fail_no_file_flag() {
         let test_filepath = "./some/file/path.js".to_string();
 
-        let input_args = vec![
-            "wipers".to_string(),
-            test_filepath,
-        ];
+        let input_args = vec!["wipers".to_string(), test_filepath];
 
         let actual_config_result = argument_parse(input_args);
 
         assert!(actual_config_result.is_none())
-
-
     }
 
     #[test]
     fn test_argument_parse_fail_no_args() {
         let test_filepath = "./some/file/path.js".to_string();
 
-        let input_args = vec![
-            "wipers".to_string(),
-        ];
+        let input_args = vec!["wipers".to_string()];
 
         let actual_config_result = argument_parse(input_args);
 
         assert!(actual_config_result.is_none())
-
     }
-
-    
-
 }
