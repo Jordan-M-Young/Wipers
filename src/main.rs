@@ -1,9 +1,10 @@
-use async_openai::{types::CreateCompletionRequestArgs, Client};
+use async_openai::Client;
 use std::error::Error;
 pub mod cli;
 pub mod config;
 pub mod file;
 pub mod lock;
+pub mod openai;
 pub mod parse;
 pub mod postprocess;
 pub mod write;
@@ -26,13 +27,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     println!("Args {:?}", &args);
     let arg_config = match cli::argument_parse(args) {
         Ok(val) => val,
-        Err(e) => {
-            panic!("No File Argument provided. Try wipers -f '<MY_FILE>'")
+        Err(_e) => {
+            panic!("No File Argument provided. Try wipers -f '<MY_FILE>' -o '<MY_TEST_DIR>'")
         }
     };
 
     let file_path = arg_config.file_path;
-    // let file_path = "./test-inputs/functions.py";
 
     match lock_set.get(&file_path) {
         Some(_val) => {
@@ -42,27 +42,25 @@ async fn main() -> Result<(), Box<dyn Error>> {
             let lf = file::LoadedFile::new(&file_path);
             let parsed_file = parse::parse(&lf);
 
-            let x: u16 = 1000;
-            // single
-
             let mut tests: Vec<String> = vec![];
             for block in &parsed_file.blocks {
                 println!("Block--------");
+                let prompt_text = openai::format_prompt(block, parsed_file.file_type);
+                let params = openai::RequestParams {
+                    max_tokens: 1000,
+                    prompt: prompt_text,
+                };
 
-                let request = CreateCompletionRequestArgs::default()
-                    .model("text-davinci-003")
-                    .prompt(format!(
-                        "Can you write some tests for the following {:?} code: {}",
-                        parsed_file.file_type, block
-                    ))
-                    .max_tokens(x)
-                    .build()?;
-
-                let response = client.completions().create(request).await?;
-
-                println!("\nResponse (single):\n");
-                let choice = &response.choices[0].text;
-                tests.push(choice.to_string());
+                match openai::make_openai_request(&client, params).await {
+                    Ok(response) => {
+                        println!("\nResponse (single):\n");
+                        let choice = &response.choices[0].text;
+                        tests.push(choice.to_string());
+                    }
+                    Err(err) => {
+                        println!("OpenAI Error {}", err);
+                    }
+                }
             }
 
             let test_string = tests.join("\n");

@@ -2,10 +2,10 @@ use crate::parse::BlockConstants;
 use crate::parse::ParsedFile;
 use std::collections::HashSet;
 
-struct ProcessedTest {
-    test_code: String,
-    imports: HashSet<String>,
-}
+// struct ProcessedTest {
+//     test_code: String,
+//     imports: HashSet<String>,
+// }
 
 fn set_to_string(import_set: HashSet<String>) -> String {
     let mut import_array: Vec<String> = vec![];
@@ -17,7 +17,7 @@ fn set_to_string(import_set: HashSet<String>) -> String {
 }
 
 pub fn post_process(test: String, parsed_file: &ParsedFile) -> String {
-    let base_test_lines = test.split("\n");
+    let base_test_lines = test.split('\n');
 
     let mut import_set: HashSet<String> = HashSet::new();
 
@@ -42,19 +42,14 @@ pub fn post_process(test: String, parsed_file: &ParsedFile) -> String {
 
     let import_statements = vec![parsed_file.imports.clone(), import_statements].join("\n");
 
-    let final_test_string = vec![import_statements, processed_test_string].join("\n");
-    final_test_string
+    vec![import_statements, processed_test_string].join("\n")
 }
 
 #[cfg(test)]
 mod tests {
     use std::collections::HashSet;
 
-    use super::post_process;
     use super::set_to_string;
-    use crate::file::LoadedFile;
-    use crate::parse::parse;
-    use crate::parse::ParsedFile;
 
     #[test]
     fn test_set_to_string() {

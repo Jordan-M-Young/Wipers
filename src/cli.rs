@@ -24,14 +24,10 @@ pub fn check_arg(
 ) -> Result<String, ArgError> {
     let args_size = args.len();
 
-    if flag_index == 0 {
-        return Err(ArgError {
+    if flag_index == 0 || flag_index >= args_size {
+        Err(ArgError {
             bad_arg: flag_str.to_string(),
-        });
-    } else if flag_index >= args_size {
-        return Err(ArgError {
-            bad_arg: flag_str.to_string(),
-        });
+        })
     } else {
         Ok(args[flag_index].clone())
     }
@@ -60,8 +56,8 @@ pub fn argument_parse(args: Vec<String>) -> Result<ArgumentConfig, ArgError> {
     let output_path = check_arg(output_index, output_flag, &args)?;
 
     Ok(ArgumentConfig {
-        file_path: file_path,
-        output_path: output_path,
+        file_path,
+        output_path,
     })
 }
 
