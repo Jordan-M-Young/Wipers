@@ -25,8 +25,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
     println!("Args {:?}", &args);
     let arg_config = match cli::argument_parse(args) {
-        Some(val) => val,
-        None => {
+        Ok(val) => val,
+        Err(e) => {
             panic!("No File Argument provided. Try wipers -f '<MY_FILE>'")
         }
     };
