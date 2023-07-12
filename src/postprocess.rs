@@ -14,7 +14,6 @@ fn set_to_string(import_set: HashSet<String>) -> String {
     }
     import_array.sort();
     import_array.join("\n")
-    
 }
 
 pub fn post_process(test: String, parsed_file: &ParsedFile) -> String {
@@ -71,6 +70,5 @@ mod tests {
         let expected_import_string = "import os\nimport sys".to_string();
 
         assert_eq!(actual_import_string, expected_import_string);
-
     }
 }
