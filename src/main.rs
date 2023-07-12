@@ -1,4 +1,4 @@
-use async_openai::{types::CreateCompletionRequestArgs, Client};
+use async_openai::Client;
 use std::error::Error;
 pub mod cli;
 pub mod config;
@@ -27,8 +27,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     println!("Args {:?}", &args);
     let arg_config = match cli::argument_parse(args) {
         Ok(val) => val,
-        Err(e) => {
-            panic!("No File Argument provided. Try wipers -f '<MY_FILE>'")
+        Err(_e) => {
+            panic!("No File Argument provided. Try wipers -f '<MY_FILE>' -o '<MY_TEST_DIR>'")
         }
     };
 
@@ -45,11 +45,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
             let mut tests: Vec<String> = vec![];
             for block in &parsed_file.blocks {
                 println!("Block--------");
-
+                let prompt_text = openai::format_prompt(block, parsed_file.file_type);
                 let params = openai::RequestParams {
                     max_tokens: 1000,
-                    text_block: block.to_string(),
-                    file_type: parsed_file.file_type,
+                    prompt: prompt_text,
                 };
 
                 match openai::make_openai_request(&client, params).await {

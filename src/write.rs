@@ -1,11 +1,11 @@
 use crate::file::LoadedFile;
 use std::fs::File;
-use std::io::{BufRead, BufReader, Error, Write};
+use std::io::{Error, Write};
 
 pub fn gen_test_name(file: LoadedFile) -> String {
     let file_path = file.file_path;
 
-    let split_path: Vec<&str> = file_path.split("/").collect();
+    let split_path: Vec<&str> = file_path.split('/').collect();
 
     let file_name = split_path[split_path.len() - 1];
 
