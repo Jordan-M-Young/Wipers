@@ -55,9 +55,9 @@ waiting on questions.....
 - [X] OpenAI logic 
 - [X] OpenAI response processing
 - [X] Appliction Writes tests
-- [ ] Test file locking
+- [X] Basic Test file locking
 - [X] Toml Configuration
-- [ ] CLI args
+- [X] Basic CLI args
 
 ### Unittests
 - [X] config.rs
@@ -65,6 +65,8 @@ waiting on questions.....
 - [X] parse.rs
 - [ ] postprocess.rs
 - [ ] write.rs  
+- [X] cli.rs
+- [ ] lock.rs 
 
 ### File support
 - [X] Add support for Python files
@@ -80,8 +82,8 @@ waiting on questions.....
 
 
 ### CI
-
-- [X] cargo test
+- [X] Commit Hooks
+- [X] Test Pipeline
 
 ### Docs 
 
