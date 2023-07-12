@@ -23,7 +23,7 @@ To run Wipers
 ### Binary
 
 ```shell
-wipers -f "<MY_FILE> -o "<MY_TEST_DIRECTORY>"
+wipers -f "<MY_FILE>" -o "<MY_TEST_DIRECTORY>"
 ```
 
 ### Debug
