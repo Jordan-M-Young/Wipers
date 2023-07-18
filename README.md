@@ -1,6 +1,10 @@
 # Wipers
 Automatic Test Writing with LLMs
 
+## Description
+
+Writing tests for your code can be annoying, use wipers to leverage openai models to write your tests for you! 
+
 ## Setup
 
 working on it.....
@@ -49,15 +53,15 @@ waiting on questions.....
 
 ## Todos
 
-###  Basic Functionality
+###  Basic Functionality [X]
 - [X] File loading
 - [X] File parsing
 - [X] OpenAI logic 
 - [X] OpenAI response processing
 - [X] Appliction Writes tests
-- [ ] Test file locking
+- [X] Basic Test file locking
 - [X] Toml Configuration
-- [ ] CLI args
+- [X] Basic CLI args
 
 ### Unittests
 - [X] config.rs
@@ -65,6 +69,8 @@ waiting on questions.....
 - [X] parse.rs
 - [ ] postprocess.rs
 - [ ] write.rs  
+- [X] cli.rs
+- [ ] lock.rs 
 
 ### File support
 - [X] Add support for Python files
@@ -72,7 +78,7 @@ waiting on questions.....
 - [ ] Add support for Rust files
 - [ ] Add support for Go files
 - [ ] Add support for C++ files
-- [ ] Add support for 
+- [ ] Add support for.....
 
 ### LLMS
 
@@ -80,8 +86,8 @@ waiting on questions.....
 
 
 ### CI
-
-- [X] cargo test
+- [X] Commit Hooks
+- [X] Test Pipeline
 
 ### Docs 
 
@@ -90,3 +96,8 @@ waiting on questions.....
 - [ ] Finish README FAQ Section
 - [ ] Write CONTRIBUTING.md
 
+
+
+## Reliability
+
+If you've ever used wipers to clean the windshield of a dirty car you might have noticed they dont get the job 100% done. Sometimes you'll need to stop and clean the windshield by hand. Likewise, Wipers is great for churning out tests for your code, but make sure to go over the tests that you write with this tool. 

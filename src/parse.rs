@@ -1,9 +1,9 @@
 use crate::file::{FileTypes, LoadedFile};
 
 enum BlockType {
-    FunctionBlock,
-    ClassBlock,
-    OtherBlock,
+    Function,
+    Class,
+    Other,
 }
 
 #[derive(Debug, PartialEq)]
@@ -23,7 +23,7 @@ pub struct ParsedFile {
 
 impl BlockConstants {
     pub fn new(file_type: &FileTypes) -> Self {
-        let constants = match file_type {
+        match file_type {
             FileTypes::Python => BlockConstants {
                 class_string: "class ".to_string(),
                 function_string: "def ".to_string(),
@@ -37,16 +37,15 @@ impl BlockConstants {
                 import_strings: vec!["import".to_string(), "require".to_string()],
             },
             _ => todo!(),
-        };
-        constants
+        }
     }
 }
 
 pub fn parse(file: &LoadedFile) -> ParsedFile {
     match file.file_type {
-        FileTypes::Python => parse_file(&file),
-        FileTypes::Javascript => parse_file(&file),
-        FileTypes::Rust => parse_file(&file),
+        FileTypes::Python => parse_file(file),
+        FileTypes::Javascript => parse_file(file),
+        FileTypes::Rust => parse_file(file),
         FileTypes::Default => {
             todo!("How'd you get here")
         }
@@ -56,12 +55,12 @@ pub fn parse(file: &LoadedFile) -> ParsedFile {
 fn parse_file(file: &LoadedFile) -> ParsedFile {
     let block_constants: BlockConstants = BlockConstants::new(&file.file_type);
     let file_string = &file.file_string;
-    let file_type = file.file_type.clone();
+    let file_type = file.file_type;
 
     let file_lines: Vec<&str> = file_string.split('\n').collect();
     let mut blocks: Vec<String> = vec![];
     let mut block_string = "".to_string();
-    let mut block_type = BlockType::OtherBlock;
+    let mut block_type = BlockType::Other;
     let mut import_string = "".to_string();
     for line in file_lines {
         if line.contains(&block_constants.method_string) {
@@ -72,11 +71,11 @@ fn parse_file(file: &LoadedFile) -> ParsedFile {
 
         if line.contains(&block_constants.function_string) {
             match block_type {
-                BlockType::ClassBlock | BlockType::FunctionBlock => blocks.push(block_string),
+                BlockType::Class | BlockType::Function => blocks.push(block_string),
                 _ => {}
             }
 
-            block_type = BlockType::FunctionBlock;
+            block_type = BlockType::Function;
             block_string = line.to_owned();
             block_string += "\n";
             continue;
@@ -84,11 +83,11 @@ fn parse_file(file: &LoadedFile) -> ParsedFile {
 
         if line.contains(&block_constants.class_string) {
             match block_type {
-                BlockType::ClassBlock | BlockType::FunctionBlock => blocks.push(block_string),
+                BlockType::Class | BlockType::Function => blocks.push(block_string),
                 _ => {}
             }
 
-            block_type = BlockType::ClassBlock;
+            block_type = BlockType::Class;
             block_string = line.to_owned();
             block_string += "\n";
             continue;
@@ -212,6 +211,6 @@ mod tests {
     #[should_panic(expected = "not yet implemented")]
     fn block_constants_new_fail() {
         let file_type = FileTypes::Rust;
-        let actual_block_constants = BlockConstants::new(&file_type);
+        let _actual_block_constants = BlockConstants::new(&file_type);
     }
 }
