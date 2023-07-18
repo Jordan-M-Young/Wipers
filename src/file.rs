@@ -51,8 +51,8 @@ fn get_file_type(file_path: &str) -> FileTypes {
     }
 }
 
-pub fn write_tests_to_file(tests: Vec<String>, parsed_file: ParsedFile) {
-    let mut test_file_string = parsed_file.imports;
+pub fn write_tests_to_file(_tests: Vec<String>, parsed_file: ParsedFile) {
+    let _test_file_string = parsed_file.imports;
 }
 
 #[cfg(test)]
